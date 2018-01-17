@@ -2,6 +2,7 @@ package io.swagger.samples.inflector.springboot.models;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.core.Link;
 
@@ -19,9 +20,50 @@ public class UserResource implements Resource {
   public List<Link> getLinks() {
     return Collections.emptyList();
   }
+  
+  public String getDoB() {
+	  String sql = "SELECT DoB from UserDetails";
+
+		Map<String, Object> row = jdbcTemplate.queryForList(sql).get(0);
+		
+		String dob = (String) row.get("DoB");
+		
+		String day =  dob.substring(0, dob.indexOf("/"));	 
+		String month =  dob.substring(dob.indexOf("/")+1, dob.lastIndexOf("/"));	
+		String year =  dob.substring(dob.lastIndexOf("/")+1, dob.length());	
+	
+		if (month.equals("Jan")) {
+			month = "01";
+		}
+			
+		String finalDob = year + "-" + month + "-" + day;
+		return finalDob;
+  }
+  
+  public String getGivenName() {
+	  String sql = "SELECT NAME from UserDetails";
+
+		Map<String, Object> row = jdbcTemplate.queryForList(sql).get(0);
+		
+		String name = (String) row.get("NAME");
+		
+		String givenName = name.substring(name.indexOf(" ") + 1, name.length());	
+		
+		return givenName;
+  }
 
   public String getSurname() {
-    throw new NotImplementedException("TODO");
+	  
+	  String sql = "SELECT NAME from UserDetails";
+
+		Map<String, Object> row = jdbcTemplate.queryForList(sql).get(0);
+		
+		String name = (String) row.get("NAME");
+		
+		String surName = name.substring(0, name.indexOf(","));	
+
+		return surName;
+    
   }
 
 }
